@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 )
 
 type calcValues struct {
@@ -11,40 +13,48 @@ type calcValues struct {
 }
 
 func main() {
-	c := [10]calcValues{}
+	c := []calcValues{}
 	var result int
 	var val int
 	var ope string
 	result = 0
-	for i := 0; i < 10; i++ {
-		if i == 0 {
-			fmt.Printf("val : ")
-			fmt.Scanf("%d", &result)
-			fmt.Printf("ope : ")
-			fmt.Scanf("%s", &ope)
-		}
-
+	fmt.Printf("val : ")
+	fmt.Scanf("%d", &result)
+	fmt.Printf("ope : ")
+	fmt.Scanf("%s", &ope)
+	cIntial := calcValues{
+		value:    result,
+		operator: ope,
+		result:   0,
+	}
+	c = append(c, cIntial)
+	for ope != "=" {
 		fmt.Printf("val : ")
 		fmt.Scanf("%d", &val)
-		if i > 0 {
-			result = c[i-1].result
-		}
 		result = calculate(result, val, ope)
-
 		fmt.Printf("Result : %d\n", result)
 		fmt.Printf("ope : ")
 		fmt.Scanf("%s", &ope)
+
 		c1 := calcValues{
 			value:    val,
 			operator: ope,
 			result:   result,
 		}
-		c[i] = c1
+		c = append(c, c1)
+
 		if ope == "=" {
+			cmd := exec.Command("clear") //Linux example, its tested
+			cmd.Stdout = os.Stdout
+			cmd.Run()
 			for _, i := range c {
-				fmt.Printf("%d%s", i.value, i.operator)
+				var operator = i.operator
+				if(i.operator == "=") {
+					operator = " "+i.operator
+				}
+				fmt.Printf("%d%s", i.value, operator)
 			}
-			fmt.Printf("%d", result)
+			fmt.Printf(" %v", result)
 			break
 		}
 	}
